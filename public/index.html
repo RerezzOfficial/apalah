@@ -113,7 +113,8 @@
       <p><strong>Expired At:</strong> <%= expired_at %></p>
     </div>
     <div class="qris">
-      <img src="/qris.jpg" alt="QR Code" />
+      <!-- Menampilkan QR Code langsung dari data URL -->
+      <img src="<%= qr %>" alt="QR Code" />
     </div>
     <p>Harap lakukan pembayaran menggunakan QR di atas.</p>
     <p>Jika pembayaran berhasil, proses pembuatan panel akan dilanjutkan secara otomatis.</p>
