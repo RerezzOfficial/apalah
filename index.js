@@ -1,14 +1,12 @@
 const express = require('express');
 const axios = require('axios');  // Import axios
-const QRCode = require('qrcode');
+const QRCode = require('qrcode'); // Import QRCode
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const port = 3000;
 
-app.set('view engine', 'ejs');
-app.use(express.static('public'));
+app.use(express.static('public')); // Menyediakan file statis di folder 'public'
 app.use(express.urlencoded({ extended: true }));
 
 const global = {
@@ -23,7 +21,7 @@ function getRandomInt(min, max) {
 }
 
 app.get('/', (req, res) => {
-  res.render('index');
+  res.sendFile(path.join(__dirname, 'public', 'index.html')); // Mengirim file index.html
 });
 
 app.post('/buypanel', async (req, res) => {
@@ -57,22 +55,22 @@ app.post('/buypanel', async (req, res) => {
     }
 
     const nominalResult = result.data.nominal;
-    const qrPath = path.join(__dirname, 'public', 'qris.jpg');
-    await QRCode.toFile(qrPath, result.data.qr_string, { margin: 2, scale: 10 });
+    const qrCodeData = await QRCode.toDataURL(result.data.qr_string, { margin: 2, scale: 10 });
 
     const data = {
       result: result.status,
       data: {
         iddepo: result.data.id,
-        qr: qrPath,
+        qr: qrCodeData,
         qr_string: result.data.qr_string,
         nominal: nominalResult,
         exp: result.data.expired_at,
       },
     };
 
+    // Mengirimkan QR Code langsung ke klien sebagai data URL
     res.render('payment', {
-      qr: data.data.qr,
+      qr: data.data.qr, // Mengirimkan data QRCode dalam bentuk base64 URL
       nominal: nominalResult,
       expired_at: result.data.expired_at,
       iddepo: result.data.id,
